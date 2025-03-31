@@ -1,12 +1,17 @@
 package bookPackage;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import bookPackage.Book;
+import bookPackage.DbConnection;
+import java.io.PrintWriter;
 
 @WebServlet(name = "BookServlet", urlPatterns = {"/BookServlet"})
 public class BookServlet extends HttpServlet {
@@ -36,7 +41,18 @@ public class BookServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        String bookName = request.getParameter("bookName");
+
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO tblbook (BookName) VALUES (?)")) {
+
+            stmt.setString(1, bookName);
+            stmt.executeUpdate();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            response.getWriter().println("<p>Error: " + e.getMessage() + "</p>");
+        }
     }
 
     @Override
