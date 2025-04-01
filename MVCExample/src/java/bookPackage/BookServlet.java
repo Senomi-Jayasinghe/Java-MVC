@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import bookPackage.Book;
 import bookPackage.DbConnection;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.ResultSet;
 
 @WebServlet(name = "BookServlet", urlPatterns = {"/BookServlet"})
 public class BookServlet extends HttpServlet {
@@ -35,7 +38,24 @@ public class BookServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        List<Book> books = new ArrayList<>();
+
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM tblbook");
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Book book = new Book();
+                book.setBookID(rs.getInt("BookID"));
+                book.setBookName(rs.getString("BookName"));
+                books.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.setAttribute("books", books);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     @Override
@@ -43,7 +63,7 @@ public class BookServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String bookName = request.getParameter("bookName");
-
+        //INSERT
         try (Connection conn = DbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO tblbook (BookName) VALUES (?)")) {
 
