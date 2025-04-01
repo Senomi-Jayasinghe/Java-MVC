@@ -38,24 +38,34 @@ public class BookServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Book> books = new ArrayList<>();
-
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM tblbook");
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                Book book = new Book();
-                book.setBookID(rs.getInt("BookID"));
-                book.setBookName(rs.getString("BookName"));
-                books.add(book);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        
+        String action = request.getParameter("action");
+        String idParam = request.getParameter("id");
+        
+        if ("edit".equals(action) && idParam != null) {
+           // Fetch book for editing
+           int bookID = Integer.parseInt(idParam);
         }
+        else {
+            List<Book> books = new ArrayList<>();
 
-        request.setAttribute("books", books);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+            try (Connection conn = DbConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement("SELECT * FROM tblbook");
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Book book = new Book();
+                    book.setBookID(rs.getInt("BookID"));
+                    book.setBookName(rs.getString("BookName"));
+                    books.add(book);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            request.setAttribute("books", books);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        }
     }
 
     @Override

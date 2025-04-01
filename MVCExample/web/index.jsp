@@ -56,7 +56,7 @@
                     <td><%= book.getBookName() %></td>
                     <td>
                         <a href="viewBook?id=<%= book.getBookID() %>">View</a> |
-                        <a href="editBook?id=<%= book.getBookID() %>">Edit</a> |
+                        <a href="BookServlet?id=<%= book.getBookID() %>&action=edit">Edit</a> |
                         <a href="deleteBook?id=<%= book.getBookID() %>" onclick="return confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
