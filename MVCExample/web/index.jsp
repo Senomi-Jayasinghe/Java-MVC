@@ -2,6 +2,13 @@
 <%@page import="bookPackage.Book, java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
+    <%
+        if (request.getAttribute("books") == null) {
+            response.sendRedirect("BookServlet");
+            return;
+        }
+    %>
+
 <head>
     <title>Book List</title>
     <style>

@@ -69,7 +69,7 @@ public class BookServlet extends HttpServlet {
 
             stmt.setString(1, bookName);
             stmt.executeUpdate();
-
+            response.sendRedirect("BookServlet");
         } catch (SQLException | ClassNotFoundException e) {
             response.getWriter().println("<p>Error: " + e.getMessage() + "</p>");
         }
